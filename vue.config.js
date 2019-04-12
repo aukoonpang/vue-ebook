@@ -40,3 +40,10 @@ module.exports = {
     }
   }
 }
+
+//个人阿里云服务器，带宽1m
+// VUE_APP_RES_URL=http://47.112.192.129
+// VUE_APP_EPUB_URL=http://47.112.192.129/epub
+// VUE_APP_BASE_URL=http://47.112.192.129:3000
+// VUE_APP_BOOK_URL=http://47.112.192.129:3000
+// VUE_APP_EPUB_OPF_URL=http://47.112.192.129/epub2 
