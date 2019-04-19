@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'toast',
+  name: "toast",
   props: {
     text: [String, Number],
     timeout: {
@@ -20,36 +20,36 @@ export default {
       default: 1500
     }
   },
-  data () {
+  data() {
     return {
       visible: false,
-      showText: ''
-    }
+      showText: ""
+    };
   },
   methods: {
-    hide () {
-      this.visible = false
+    hide() {
+      this.visible = false;
     },
-    show () {
-      this.updateText(this.text)
-      clearTimeout(this.task)
-      this.task = null
-      this.visible = true
+    show() {
+      this.updateText(this.text);
+      clearTimeout(this.task);
+      this.task = null;
+      this.visible = true;
       this.task = setTimeout(() => {
-        this.visible = false
-      }, this.timeout)
+        this.visible = false;
+      }, this.timeout);
     },
-    continueShow () {
-      this.updateText(this.text)
-      clearTimeout(this.task)
-      this.task = null
-      this.visible = true
+    continueShow() {
+      this.updateText(this.text);
+      clearTimeout(this.task);
+      this.task = null;
+      this.visible = true;
     },
-    updateText (text) {
-      this.showText = text
+    updateText(text) {
+      this.showText = text;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>

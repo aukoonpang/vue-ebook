@@ -4,14 +4,17 @@
       <div class="left">
         <span class="icon-back" @click="back"></span>
       </div>
+      <div class="middle">
+        <span>{{getSectionName}}</span>
+      </div>
       <div class="right">
-        <div class="icon-wrapper">
+        <div class="icon-wrapper" @click="jumpToShelf">
           <span class="icon-shelf"></span>
         </div>
-        <div class="icon-wrapper">
+        <div class="icon-wrapper" v-if="cart">
           <span class="icon-cart"></span>
         </div>
-        <div class="icon-wrapper">
+        <div class="icon-wrapper" @click="nextComing">
           <span class="icon-more"></span>
         </div>
       </div>
@@ -20,16 +23,29 @@
 </template>
 
 <script>
-import { ebookMixin } from '../../utils/mixin'
+import { ebookMixin } from "../../utils/mixin";
 
 export default {
   mixins: [ebookMixin],
+  data() {
+    return {
+      cart: false
+    };
+  },
   methods: {
-    back () {
-      this.$router.go(-1)
+    back() {
+      this.$router.go(-1);
+    },
+    jumpToShelf() {
+      this.$router.push("/store/shelf");
+    },
+    nextComing() {
+      console.log("+");
+      const text = "敬请期待";
+      this.simpleToast(text);
     }
   }
-}
+};
 </script>
 
 <style lang='scss' scoped>
@@ -46,8 +62,15 @@ export default {
   box-shadow: 0 px2rem(8) px2rem(8) rgba(0, 0, 0, 0.15);
   font-size: px2rem(20);
   .left {
-    flex: 0 0 px2rem(60);
+    flex: 0 0 px2rem(50);
     @include center;
+  }
+  .middle {
+    flex: 2;
+    line-height: px2rem(48);
+    font-size: px2rem(14);
+    color: #6d7178;
+    @include ellipsis;
   }
   .right {
     flex: 1;

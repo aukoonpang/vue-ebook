@@ -1,6 +1,5 @@
 <template>
   <div class="ebook" ref="ebook">
-    <ebook-header></ebook-header>
     <ebook-title></ebook-title>
     <ebook-reader></ebook-reader>
     <ebook-menu></ebook-menu>
@@ -10,15 +9,14 @@
 </template>
 
 <script>
-import EbookReader from '../../components/ebook/EbookReader'
-import EbookTitle from '../../components/ebook/EbookTitle'
-import EbookMenu from '../../components/ebook/EbookMenu'
-import EbookBookMark from '../../components/ebook/EbookBookMark'
-import EbookHeader from '../../components/ebook/EbookHeader'
-import EbookFooter from '../../components/ebook/EbookFooter'
-import { getReadTime, saveReadTime } from '../../utils/localStorage'
-import { setInterval, clearInterval, setTimeout } from 'timers'
-import { ebookMixin } from '../../utils/mixin'
+import EbookReader from "../../components/ebook/EbookReader";
+import EbookTitle from "../../components/ebook/EbookTitle";
+import EbookMenu from "../../components/ebook/EbookMenu";
+import EbookBookMark from "../../components/ebook/EbookBookMark";
+import EbookFooter from "../../components/ebook/EbookFooter";
+import { getReadTime, saveReadTime } from "../../utils/localStorage";
+import { setInterval, clearInterval, setTimeout } from "timers";
+import { ebookMixin } from "../../utils/mixin";
 
 export default {
   mixins: [ebookMixin],
@@ -27,53 +25,52 @@ export default {
     EbookTitle,
     EbookMenu,
     EbookBookMark,
-    EbookHeader,
     EbookFooter
   },
   methods: {
-    move (newOffsetY) {
-      this.$refs.ebook.style.top = newOffsetY + 'px'
+    move(newOffsetY) {
+      this.$refs.ebook.style.top = newOffsetY + "px";
     },
-    restore () {
-      this.$refs.ebook.style.top = 0
-      this.$refs.ebook.style.transition = 'all .2s linear'
+    restore() {
+      this.$refs.ebook.style.top = 0;
+      this.$refs.ebook.style.transition = "all .2s linear";
       setTimeout(() => {
-        this.$refs.ebook.style.transition = ''
-      }, 200)
+        this.$refs.ebook.style.transition = "";
+      }, 200);
     },
-    startLoopReadTime () {
-      let readTime = getReadTime(this.fileName)
+    startLoopReadTime() {
+      let readTime = getReadTime(this.fileName);
       if (!readTime) {
-        readTime = 0
+        readTime = 0;
       }
       this.task = setInterval(() => {
-        readTime++
+        readTime++;
         if (readTime % 30 === 0) {
-          saveReadTime(this.fileName, readTime)
+          saveReadTime(this.fileName, readTime);
         }
-      }, 1000)
+      }, 1000);
     }
   },
-  mounted () {
-    this.startLoopReadTime()
+  mounted() {
+    this.startLoopReadTime();
   },
-  beforeDestroy () {
+  beforeDestroy() {
     if (this.task) {
-      clearInterval(this.task)
+      clearInterval(this.task);
     }
   },
   watch: {
-    offsetY (newOffsetY) {
+    offsetY(newOffsetY) {
       if (!this.menuVisible && this.bookAvailable) {
         if (newOffsetY > 0) {
-          this.move(newOffsetY)
+          this.move(newOffsetY);
         } else if (newOffsetY === 0) {
-          this.restore()
+          this.restore();
         }
       }
     }
   }
-}
+};
 </script>
 
 <style lang='scss' scoped>

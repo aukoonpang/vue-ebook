@@ -7,7 +7,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/store'
+      redirect: '/store/home'
     },
     {
       path: '/ebook',
@@ -44,6 +44,10 @@ export default new Router({
         {
           path: 'detail',
           component: () => import('./views/store/StoreDetail.vue')
+        },
+        {
+          path: 'speaking',
+          component: () => import('./views/store/StoreSpeaking.vue')
         }
       ]
     }

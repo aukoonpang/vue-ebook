@@ -22,138 +22,138 @@
 </template>
 
 <script>
-import { storeShelfMixin } from '../../utils/mixin.js'
-import { saveBookShelf, removeLocalStorage } from '../../utils/localStorage.js'
-import { download } from '../../api/store'
-import { removeLocalForage } from '../../utils/localForage.js'
+import { storeShelfMixin } from "../../utils/mixin.js";
+import { saveBookShelf, removeLocalStorage } from "../../utils/localStorage.js";
+import { download } from "../../api/store";
+import { removeLocalForage } from "../../utils/localForage.js";
 
 export default {
   mixins: [storeShelfMixin],
   computed: {
-    isSelected () {
-      return this.shelfSelected && this.shelfSelected.length > 0
+    isSelected() {
+      return this.shelfSelected && this.shelfSelected.length > 0;
     },
-    tabs () {
+    tabs() {
       return [
         {
-          label: this.$t('shelf.private'),
-          label2: this.$t('shelf.noPrivate'),
+          label: this.$t("shelf.private"),
+          label2: this.$t("shelf.noPrivate"),
           index: 1
         },
         {
-          label: this.$t('shelf.download'),
-          label2: this.$t('shelf.delete'),
+          label: this.$t("shelf.download"),
+          label2: this.$t("shelf.delete"),
           index: 2
         },
         {
-          label: this.$t('shelf.move'),
+          label: this.$t("shelf.move"),
           index: 3
         },
         {
-          label: this.$t('shelf.remove'),
+          label: this.$t("shelf.remove"),
           index: 4
         }
-      ]
+      ];
     },
-    isPrivate () {
+    isPrivate() {
       if (!this.isSelected) {
-        return false
+        return false;
       } else {
-        return this.shelfSelected.every(item => item.private)
+        return this.shelfSelected.every(item => item.private);
       }
     },
-    isDownload () {
+    isDownload() {
       if (!this.isSelected) {
-        return false
+        return false;
       } else {
-        return this.shelfSelected.every(item => item.cache)
+        return this.shelfSelected.every(item => item.cache);
       }
     }
   },
-  data () {
+  data() {
     return {
       popupMenu: null
-    }
+    };
   },
   methods: {
-    async downloadSelectedBook () {
+    async downloadSelectedBook() {
       for (let i = 0; i < this.shelfSelected.length; i++) {
         await this.downloadBook(this.shelfSelected[i]).then(book => {
-          book.cache = true
-        })
+          book.cache = true;
+        });
       }
     },
-    downloadBook (book) {
-      let text = ''
+    downloadBook(book) {
+      let text = "";
       const toast = this.toast({
         text
-      })
-      toast.continueShow()
+      });
+      toast.continueShow();
       return new Promise((resolve, reject) => {
         download(
           book,
           book => {
-            toast.remove()
-            resolve(book)
+            toast.remove();
+            resolve(book);
           },
           reject,
           progressEvent => {
             const progress =
               Math.floor((progressEvent.loaded / progressEvent.total) * 100) +
-              '%'
-            const text = this.$t('shelf.progressDownload').replace(
-              '$1',
+              "%";
+            const text = this.$t("shelf.progressDownload").replace(
+              "$1",
               `${book.fileName}.epub(${progress})`
-            )
-            toast.updateText(text)
+            );
+            toast.updateText(text);
           }
-        )
-      })
+        );
+      });
     },
-    removeSelectedBook () {
+    removeSelectedBook() {
       Promise.all(this.shelfSelected.map(book => this.removeBook(book))).then(
         books => {
           books.map(book => {
-            book.cache = false
-          })
-          saveBookShelf(this.shelfList)
-          this.simpleToast(this.$t('shelf.removeDownloadSuccess'))
+            book.cache = false;
+          });
+          saveBookShelf(this.shelfList);
+          this.simpleToast(this.$t("shelf.removeDownloadSuccess"));
         }
-      )
+      );
     },
-    removeBook (book) {
+    removeBook(book) {
       return new Promise((resolve, reject) => {
-        removeLocalStorage(`${book.categoryText}/${book.fileName}`)
-        removeLocalForage(`${book.fileName}`, resolve, reject)
-        resolve(book)
-      })
+        removeLocalStorage(`${book.categoryText}/${book.fileName}`);
+        removeLocalForage(`${book.fileName}`, resolve, reject);
+        resolve(book);
+      });
     },
-    onComplete () {
-      this.hidePopup()
-      this.setIsEditMode(false)
-      saveBookShelf(this.shelfList)
+    onComplete() {
+      this.hidePopup();
+      this.setIsEditMode(false);
+      saveBookShelf(this.shelfList);
     },
-    hidePopup () {
-      this.popupMenu.hide()
+    hidePopup() {
+      this.popupMenu.hide();
     },
-    setPrivate () {
-      let isPrivate
+    setPrivate() {
+      let isPrivate;
       if (this.isPrivate) {
-        isPrivate = false
+        isPrivate = false;
       } else {
-        isPrivate = true
+        isPrivate = true;
       }
       this.shelfSelected.forEach(book => {
-        book.private = isPrivate
-      })
-      this.onComplete()
+        book.private = isPrivate;
+      });
+      this.onComplete();
       if (isPrivate) {
-        this.simpleToast(this.$t('shelf.setPrivateSuccess'))
+        this.simpleToast(this.$t("shelf.setPrivateSuccess"));
       } else {
-        this.simpleToast(this.$t('shelf.closePrivateSuccess'))
+        this.simpleToast(this.$t("shelf.closePrivateSuccess"));
       }
     },
-    async setDownload () {
+    async setDownload() {
       // let isDownload;
       // if (this.isDownload) {
       //   isDownload = false;
@@ -163,13 +163,13 @@ export default {
       // this.shelfSelected.forEach(book => {
       //   book.cache = isDownload;
       // });
-      this.onComplete()
+      this.onComplete();
       if (this.isDownload) {
-        this.removeSelectedBook()
+        this.removeSelectedBook();
       } else {
-        await this.downloadSelectedBook()
-        saveBookShelf(this.shelfList)
-        this.simpleToast(this.$t('shelf.setDownloadSuccess'))
+        await this.downloadSelectedBook();
+        saveBookShelf(this.shelfList);
+        this.simpleToast(this.$t("shelf.setDownloadSuccess"));
       }
       // if (isDownload) {
       //   this.simpleToast(this.$t("shelf.setDownloadSuccess"));
@@ -177,126 +177,126 @@ export default {
       //   this.simpleToast(this.$t("shelf.removeDownloadSuccess"));
       // }
     },
-    removeSelected () {
+    removeSelected() {
       this.shelfSelected.forEach(selected => {
-        this.setShelfList(this.shelfList.filter(book => book !== selected))
-      })
-      this.setShelfSelected([])
-      this.onComplete()
+        this.setShelfList(this.shelfList.filter(book => book !== selected));
+      });
+      this.setShelfSelected([]);
+      this.onComplete();
     },
-    showPrivate () {
+    showPrivate() {
       this.popupMenu = this.popup({
         title: this.isPrivate
-          ? this.$t('shelf.closePrivateTitle')
-          : this.$t('shelf.setPrivateTitle'),
+          ? this.$t("shelf.closePrivateTitle")
+          : this.$t("shelf.setPrivateTitle"),
         btn: [
           {
             text: this.isPrivate
-              ? this.$t('shelf.close')
-              : this.$t('shelf.open'),
+              ? this.$t("shelf.close")
+              : this.$t("shelf.open"),
             click: () => {
-              this.setPrivate()
+              this.setPrivate();
             }
           },
           {
-            text: this.$t('shelf.cancel'),
+            text: this.$t("shelf.cancel"),
             click: () => {
-              this.hidePopup()
+              this.hidePopup();
             }
           }
         ]
-      }).show()
+      }).show();
     },
-    showDownload () {
+    showDownload() {
       this.popupMenu = this.popup({
         title: this.isDownload
-          ? this.$t('shelf.removeDownloadTitle')
-          : this.$t('shelf.setDownloadTitle'),
+          ? this.$t("shelf.removeDownloadTitle")
+          : this.$t("shelf.setDownloadTitle"),
         btn: [
           {
             text: this.isDownload
-              ? this.$t('shelf.delete')
-              : this.$t('shelf.open'),
+              ? this.$t("shelf.delete")
+              : this.$t("shelf.open"),
             click: () => {
-              this.setDownload()
+              this.setDownload();
             }
           },
           {
-            text: this.$t('shelf.cancel'),
+            text: this.$t("shelf.cancel"),
             click: () => {
-              this.hidePopup()
+              this.hidePopup();
             }
           }
         ]
-      }).show()
+      }).show();
     },
-    showRemove () {
-      let title
+    showRemove() {
+      let title;
       if (this.shelfSelected.length === 1) {
-        title = this.$t('shelf.removeBookTitle').replace(
-          '$1',
+        title = this.$t("shelf.removeBookTitle").replace(
+          "$1",
           `《${this.shelfSelected[0].title}》`
-        )
+        );
       } else {
-        title = this.$t('shelf.removeBookTitle').replace(
-          '$1',
-          this.$t('shelf.selectedBooks')
-        )
+        title = this.$t("shelf.removeBookTitle").replace(
+          "$1",
+          this.$t("shelf.selectedBooks")
+        );
       }
       this.popupMenu = this.popup({
         title: title,
         btn: [
           {
-            text: this.$t('shelf.removeBook'),
-            type: 'danger',
+            text: this.$t("shelf.removeBook"),
+            type: "danger",
             click: () => {
-              this.removeSelected()
+              this.removeSelected();
             }
           },
           {
-            text: this.$t('shelf.cancel'),
+            text: this.$t("shelf.cancel"),
             click: () => {
-              this.hidePopup()
+              this.hidePopup();
             }
           }
         ]
-      }).show()
+      }).show();
     },
-    onTabClick (item) {
+    onTabClick(item) {
       if (!this.isSelected) {
-        return
+        return;
       }
       switch (item.index) {
         case 1:
-          this.showPrivate()
-          break
+          this.showPrivate();
+          break;
         case 2:
-          this.showDownload()
-          break
+          this.showDownload();
+          break;
         case 3:
-          this.dialog().show()
-          break
+          this.dialog().show();
+          break;
         case 4:
-          this.showRemove()
-          break
+          this.showRemove();
+          break;
         default:
-          break
+          break;
       }
     },
-    label (item) {
+    label(item) {
       switch (item.index) {
         case 1:
-          return this.isPrivate ? item.label2 : item.label
-          //break
+          return this.isPrivate ? item.label2 : item.label;
+        //break
         case 2:
-          return this.isDownload ? item.label2 : item.label
-          //break
+          return this.isDownload ? item.label2 : item.label;
+        //break
         default:
-          return item.label
+          return item.label;
       }
     }
   }
-}
+};
 </script>
 <style lang='scss' scoped>
 @import "../../assets/styles/global.scss";
